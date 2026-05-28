@@ -6,6 +6,7 @@ import { auth } from '@/auth';
 import MarkdownContent from '@/components/article/MarkdownContent';
 import CommentList from '@/components/article/CommentList';
 import LikeButton from '@/components/article/LikeButton';
+import BrowseLogger from '@/components/article/BrowseLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,6 +46,7 @@ export default async function ArticlePage({
         ))}
       </div>
       <MarkdownContent content={article.content} />
+      <BrowseLogger articleId={article.id} />
       <div className="mt-10 flex justify-center">
         <LikeButton articleId={article.id} count={likeInfo.count} liked={likeInfo.liked} />
       </div>

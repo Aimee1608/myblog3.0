@@ -1,0 +1,162 @@
+@import url('https://fonts.loli.net/css2?family=Sigmar+One&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background: #efefef;
+    color: #444;
+    font-family: Arial, 'STHeiti', Helvetica, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* 通用白色卡片：圆角 + 阴影 + hover 上浮 */
+  .card-box {
+    position: relative;
+    background: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow:
+      0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    transition: all 0.2s linear;
+  }
+  .card-box:hover {
+    transform: translate(0, -2px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+  }
+
+  /* 文章卡片左上角圆形日期角标 */
+  .round-date {
+    position: absolute;
+    top: -20px;
+    left: -22px;
+    height: 60px;
+    width: 70px;
+    padding-top: 10px;
+    border-radius: 100px;
+    color: #fff;
+    text-align: center;
+    background: #97dffd;
+    box-shadow:
+      0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    z-index: 2;
+  }
+  .round-date .day {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .round-date .month {
+    font-size: 12px;
+  }
+
+  /* 左突出的分类标签，带右下三角 */
+  .ui-label {
+    position: relative;
+    left: -32px;
+    display: inline-block;
+    margin: 5px 0 15px 2px;
+    padding: 7px 11.2px 7px 32px;
+    border-radius: 0 4px 4px 0;
+    background-color: #97dffd;
+    color: #fff;
+    font-size: 14px;
+    box-shadow:
+      0 2px 2px 0 rgba(0, 0, 0, 0.14),
+      0 3px 1px -2px rgba(0, 0, 0, 0.2),
+      0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  }
+  .ui-label::after {
+    position: absolute;
+    content: '';
+    top: 100%;
+    left: 0;
+    border-right: 1em solid #48456d;
+    border-bottom: 1em solid transparent;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* 侧栏"抓住我"社交圆形图标 */
+.catch-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 42px;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+.catch-icon:hover {
+  color: #fff;
+  background: #f4692c;
+}
+
+/* Do you like me 心形雪碧图（heart.png 28 帧） */
+.heart-sprite {
+  display: inline-block;
+  width: 100px;
+  height: 100px;
+  background: url(/img/heart.png) no-repeat 0 0;
+  background-position: 0 0;
+  transition: background-position 1s steps(28);
+  transition-duration: 0s;
+  vertical-align: middle;
+}
+.heart-sprite:hover {
+  transform: scale(1.15);
+}
+.heart-sprite.active {
+  transition-duration: 1s;
+  background-position: -2800px 0;
+}
+
+/* 头像 hover 旋转一圈 */
+@keyframes avatarSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* 页脚心形呼吸 */
+@keyframes heartScale {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.8);
+  }
+}
+/* banner 信息卡弹入（保持 -50% 水平居中，仅上下入场，避免左右闪动） */
+@keyframes cardRise {
+  from {
+    transform: translate(-50%, 90px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+/* 打字机光标闪烁 */
+@keyframes blinkCaret {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}

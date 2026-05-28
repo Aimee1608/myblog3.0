@@ -1,18 +1,19 @@
 # syntax=docker/dockerfile:1
 
-# ---- deps: install node_modules ----
-FROM node:20-alpine AS deps
+# ---- builder: install deps + build Next.js standalone in one stage ----
+# Merging avoids a class of multi-stage / BuildKit quirks where COPY --from
+# can silently drop dependency binaries; also no build-cache to lose since
+# CI runners are fresh anyway.
+FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package.json package-lock.json* ./
 # Default to npmjs.org (works on GitHub Actions runners abroad).
 # Local builds in China override via: --build-arg NPM_REGISTRY=https://registry.npmmirror.com
 ARG NPM_REGISTRY=https://registry.npmjs.org
-RUN npm ci --registry=${NPM_REGISTRY}
-
-# ---- builder: build the Next.js standalone output ----
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+RUN set -ex \
+ && npm ci --registry=${NPM_REGISTRY} --include=optional \
+ && test -x node_modules/.bin/next \
+ && echo "next binary OK: $(node_modules/.bin/next --version 2>&1 | tail -1)"
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build

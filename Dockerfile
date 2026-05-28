@@ -13,6 +13,10 @@ ARG NPM_REGISTRY=https://registry.npmjs.org
 # during `npm ci` on alpine. Upgrade to npm 11 before installing deps.
 RUN npm install -g npm@11 --registry=${NPM_REGISTRY} --no-audit --no-fund
 COPY package.json package-lock.json* ./
+# package-lock.json's `resolved` URLs are pinned to the corp bnpm.byted.org
+# (only resolvable on the corp dev box). Rewrite them to NPM_REGISTRY so the
+# same lockfile works in CI (npmjs.org) and locally (npmmirror.com).
+RUN sed -i "s|https://bnpm.byted.org|${NPM_REGISTRY}|g" package-lock.json
 RUN set -ex \
  && npm ci --registry=${NPM_REGISTRY} --include=optional --no-audit --no-fund \
  && test -x node_modules/.bin/next \

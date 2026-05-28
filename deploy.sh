@@ -35,6 +35,7 @@ ssh "${REMOTE}" "
     --network=host \
     --env-file /root/myblog3.env \
     --memory=350m \
+    -v /www/wwwroot/myblog-uploads:/app/public/posts-images \
     ${IMAGE}
   docker image prune -f >/dev/null 2>&1 || true
   rm -f ${ARCHIVE}

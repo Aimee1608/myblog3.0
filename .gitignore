@@ -17,6 +17,10 @@ next-env.d.ts
 .env
 .env*.local
 
+# 用户上传的文章配图（运行时写入，不进仓库，仅保留目录）
+/public/posts-images/*
+!/public/posts-images/.gitkeep
+
 # misc
 npm-debug.log*
 yarn-error.log*

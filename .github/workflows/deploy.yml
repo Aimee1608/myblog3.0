@@ -1,0 +1,74 @@
+name: Build & Deploy to ECS
+
+on:
+  push:
+    branches: [main]
+    # Skip pushes that only touch docs/readme (won't change runtime)
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - 'docs/**'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        run: |
+          TAG=$(date -u +%Y%m%d-%H%M)-${GITHUB_SHA::7}
+          echo "IMAGE=myblog3:$TAG" >> $GITHUB_ENV
+          docker build -t myblog3:$TAG .
+
+      - name: Save image
+        run: |
+          docker save $IMAGE | gzip > /tmp/myblog3.tar.gz
+          ls -lh /tmp/myblog3.tar.gz
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ECS_SSH_KEY }}" > ~/.ssh/id_ecs
+          chmod 600 ~/.ssh/id_ecs
+          ssh-keyscan -p "${{ secrets.ECS_PORT }}" -H "${{ secrets.ECS_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+          echo "Host ecs
+            HostName ${{ secrets.ECS_HOST }}
+            Port ${{ secrets.ECS_PORT }}
+            User ${{ secrets.ECS_USER }}
+            IdentityFile ~/.ssh/id_ecs
+            IdentitiesOnly yes
+            StrictHostKeyChecking accept-new" > ~/.ssh/config
+
+      - name: Upload image to ECS
+        run: scp /tmp/myblog3.tar.gz ecs:/tmp/myblog3.tar.gz
+
+      - name: Load & restart container on ECS
+        run: |
+          ssh ecs "
+            set -e
+            docker load < /tmp/myblog3.tar.gz
+            docker rm -f myblog3 2>/dev/null || true
+            docker run -d --name myblog3 --restart=always \
+              --network=host \
+              --env-file /root/myblog3.env \
+              --memory=350m \
+              -v /www/wwwroot/myblog-uploads:/app/public/posts-images \
+              $IMAGE
+            docker image prune -f >/dev/null 2>&1 || true
+            rm -f /tmp/myblog3.tar.gz
+            docker ps --filter name=myblog3 --format '{{.Names}}  {{.Status}}'
+          "
+
+      - name: Verify
+        run: |
+          sleep 5
+          ssh ecs 'curl -sk --resolve mangoya.cn:443:127.0.0.1 -o /dev/null -w "https HTTP %{http_code}\n" https://mangoya.cn/'

@@ -4,8 +4,10 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 COPY package.json package-lock.json* ./
-# Container can't reach the corp bnpm mirror; use a public CN mirror to avoid timeouts.
-RUN npm ci --registry=https://registry.npmmirror.com
+# Default to npmjs.org (works on GitHub Actions runners abroad).
+# Local builds in China override via: --build-arg NPM_REGISTRY=https://registry.npmmirror.com
+ARG NPM_REGISTRY=https://registry.npmjs.org
+RUN npm ci --registry=${NPM_REGISTRY}
 
 # ---- builder: build the Next.js standalone output ----
 FROM node:20-alpine AS builder

@@ -15,7 +15,7 @@ REMOTE="myblog"          # ssh alias configured in ~/.ssh/config
 ARCHIVE="/tmp/myblog3_${TAG}.tar.gz"
 
 echo "==> [1/5] Building ${IMAGE} locally"
-sudo docker build -t "${IMAGE}" .
+sudo docker build --build-arg NPM_REGISTRY=https://registry.npmmirror.com -t "${IMAGE}" .
 
 echo "==> [2/5] Saving image to ${ARCHIVE}"
 sudo docker save "${IMAGE}" | gzip > "${ARCHIVE}"

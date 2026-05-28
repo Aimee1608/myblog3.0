@@ -18,7 +18,27 @@ export async function generateMetadata({
   const { id } = await params;
   const article = await getArticleById(id);
   if (!article) return { title: '文章未找到' };
-  return { title: article.title, description: article.summary };
+  const url = `/article/${article.id}`;
+  return {
+    title: article.title,
+    description: article.summary,
+    alternates: { canonical: url },
+    openGraph: {
+      type: 'article',
+      url,
+      title: article.title,
+      description: article.summary,
+      publishedTime: article.createDate,
+      modifiedTime: article.lastModifiedDate,
+      authors: ['Aimee'],
+      tags: article.tagNames,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: article.title,
+      description: article.summary,
+    },
+  };
 }
 
 export default async function ArticlePage({

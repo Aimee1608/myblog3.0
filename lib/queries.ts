@@ -315,7 +315,7 @@ export async function getArticleForEdit(id: string): Promise<ArticleEditData | n
 export async function getComments(articleId: string): Promise<CommentItem[]> {
   await dbConnect();
   const comments = await CommentModel.find({ articleId, state: 1 })
-    .sort({ createDate: 1 })
+    .sort({ createDate: -1 })
     .lean();
   const userIds = [...new Set(comments.map((c) => c.userId))];
   const users = await UserModel.find({ userId: { $in: userIds } })

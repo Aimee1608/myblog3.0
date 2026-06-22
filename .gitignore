@@ -5,6 +5,7 @@ node_modules/
 .next/
 out/
 next-env.d.ts
+tsconfig.tsbuildinfo
 
 # production build artifacts
 *.tar.gz
@@ -25,3 +26,4 @@ next-env.d.ts
 npm-debug.log*
 yarn-error.log*
 .DS_Store
+.claude

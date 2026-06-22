@@ -40,7 +40,7 @@ export default function CommentForm({ articleId }: { articleId: string }) {
           onClick={() => setShowEmoji((v) => !v)}
           className="rounded border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-50"
         >
-          OwO 表情
+          😀 表情
         </button>
         <button
           type="submit"
@@ -51,17 +51,17 @@ export default function CommentForm({ articleId }: { articleId: string }) {
       </div>
 
       {showEmoji && (
-        <div className="mt-2 grid max-h-48 grid-cols-8 gap-1 overflow-y-auto rounded border border-gray-200 p-2 sm:grid-cols-12">
+        <div className="mt-2 grid max-h-56 grid-cols-8 gap-1 overflow-y-auto rounded border border-gray-200 p-2 sm:grid-cols-10">
           {OwOlist.map((e) => (
             <button
               type="button"
               key={e.title}
               onClick={() => insertEmoji(e.title)}
               title={e.title}
-              className="rounded p-1 hover:bg-gray-100"
+              className="rounded p-1 transition-transform hover:scale-125 hover:bg-gray-100"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/img/emot/image/${e.url}`} alt={e.title} className="h-6 w-6" />
+              <img src={`/img/emot/fluent3d/${e.url}`} alt={e.title} className="h-7 w-7" />
             </button>
           ))}
         </div>

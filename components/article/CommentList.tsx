@@ -53,7 +53,7 @@ export default async function CommentList({
                   {c.parentId && <span className="text-xs text-gray-400">回复</span>}
                 </div>
                 <p
-                  className="mt-1 whitespace-pre-wrap break-words text-sm text-gray-700 dark:text-gray-300 [&_img]:inline [&_img]:h-5 [&_img]:w-5 [&_img]:align-text-bottom"
+                  className="mt-1 whitespace-pre-wrap break-words text-sm text-gray-700 dark:text-gray-300 [&_img]:inline [&_img]:h-6 [&_img]:w-6 [&_img]:align-text-bottom"
                   dangerouslySetInnerHTML={{ __html: renderComment(c.content) }}
                 />
               </div>
